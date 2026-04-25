@@ -1,6 +1,7 @@
 import sharp from 'sharp';
 import { resolve } from 'path';
 import { existsSync } from 'fs';
+import { log } from './logger.js';
 
 const TOLERANCE = 30;
 
@@ -14,30 +15,27 @@ export class Detector {
   ): Promise<void> {
     const refPath = resolve(process.cwd(), 'src', 'reference.png');
     if (!existsSync(refPath)) {
-      console.error('src/reference.png not found');
-      process.exit(1);
+      log.fatal('src/reference.png not found');
     }
 
     const metadata = await sharp(refPath).metadata();
     if (!metadata.width || !metadata.height) {
-      console.error('Could not read reference image dimensions');
-      process.exit(1);
+      log.fatal('Could not read reference image dimensions');
     }
 
     if (
       metadata.width !== regionWidth ||
       metadata.height !== regionHeight
     ) {
-      console.error(
+      log.fatal(
         `Reference image dimensions (${metadata.width}x${metadata.height}) ` +
           `do not match configured region dimensions (${regionWidth}x${regionHeight})`,
       );
-      process.exit(1);
     }
 
     this.totalPixels = metadata.width * metadata.height;
     this.reference = await sharp(refPath).ensureAlpha().raw().toBuffer();
-    console.log(
+    log.success(
       `Reference loaded: ${metadata.width}x${metadata.height} (${this.totalPixels} pixels)`,
     );
   }
