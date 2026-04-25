@@ -17,7 +17,7 @@ Both are loaded at startup. `.env` is gitignored.
 
 ## Dual monitors
 
-`screenshot-desktop` captures one display at a time via `listDisplays()`. The `displayIndex` in `config.json` selects which one. Coordinates in `region` are relative to that display's top-left. Never capture the full combined desktop — only the target display.
+PowerShell (`System.Drawing.Graphics.CopyFromScreen`) captures one display at a time via `listDisplays()`. The `displayIndex` in `config.json` selects which one. Coordinates in `region` are relative to that display's top-left. Never capture the full combined desktop — only the target display.
 
 ## Reference image
 
