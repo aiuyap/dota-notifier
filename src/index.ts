@@ -2,24 +2,26 @@ import { loadConfig } from './config.js';
 import { listDisplays, captureRegion } from './capture.js';
 import { Detector } from './detector.js';
 import { Notifier } from './notifier.js';
+import { log } from './logger.js';
 
 async function main() {
-  console.log('Dota 2 Match Notifier starting...\n');
+  log.banner();
 
   const config = loadConfig();
-  console.log('Region:', `${config.region.width}x${config.region.height} at (${config.region.x}, ${config.region.y})`);
+  log.info(
+    `Region: ${config.region.width}x${config.region.height} at (${config.region.x}, ${config.region.y})`,
+  );
 
   const displays = await listDisplays();
-  console.log(`\nFound ${displays.length} display(s):`);
-  displays.forEach((d: { name: string }, i: number) => console.log(`  [${i}] ${d.name}`));
+  log.info(`Found ${displays.length} display(s):`);
+  displays.forEach((d: { name: string }, i: number) => log.info(`  [${i}] ${d.name}`));
 
   if (config.displayIndex >= displays.length) {
-    console.error(
-      `\ndisplayIndex ${config.displayIndex} is out of range (max ${displays.length - 1})`,
+    log.fatal(
+      `displayIndex ${config.displayIndex} is out of range (max ${displays.length - 1})`,
     );
-    process.exit(1);
   }
-  console.log(`Using display [${config.displayIndex}]: ${displays[config.displayIndex].name}`);
+  log.info(`Using display [${config.displayIndex}]: ${displays[config.displayIndex].name}`);
 
   const detector = new Detector();
   await detector.loadReference(config.region.width, config.region.height);
@@ -33,7 +35,7 @@ async function main() {
 
   let running = true;
   const shutdown = async () => {
-    console.log('\nShutting down...');
+    log.warn('Shutting down...');
     running = false;
     await notifier.destroy();
     process.exit(0);
@@ -44,8 +46,8 @@ async function main() {
   // Allow Discord client time to connect
   await new Promise((r) => setTimeout(r, 2000));
 
-  console.log(
-    `\nPolling every ${config.pollIntervalMs}ms | threshold: ${(config.threshold * 100).toFixed(0)}% | cooldown: ${config.cooldownMs}ms\n`,
+  log.info(
+    `Polling every ${config.pollIntervalMs}ms | threshold: ${(config.threshold * 100).toFixed(0)}% | cooldown: ${config.cooldownMs}ms`,
   );
 
   while (running) {
@@ -56,14 +58,16 @@ async function main() {
       const similarity = detector.compare(pixels);
 
       const percent = (similarity * 100).toFixed(1);
-      process.stdout.write(`  similarity: ${percent}%  \r`);
+      log.status(`similarity: ${percent}%`);
 
       if (similarity >= config.threshold) {
-        console.log(`\nMatch detected! (${percent}%)`);
+        log.statusClear();
+        log.success(`Match detected! (${percent}%)`);
         await notifier.notify();
       }
     } catch (err) {
-      console.error('\nPoll error:', err);
+      log.statusClear();
+      log.error(`Poll error: ${err}`);
     }
 
     const elapsed = Date.now() - start;
@@ -73,6 +77,5 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.error('Fatal error:', err);
-  process.exit(1);
+  log.fatal(`Fatal error: ${err}`);
 });
