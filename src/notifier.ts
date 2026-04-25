@@ -22,7 +22,7 @@ export class Notifier {
       intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
     });
 
-    this.client.once('ready', () => {
+    this.client.once('clientReady', () => {
       this.ready = true;
       console.log(`Logged in as ${this.client.user?.tag}`);
     });
@@ -39,8 +39,6 @@ export class Notifier {
     const now = Date.now();
     if (now - this.lastNotification < this.cooldownMs) return;
 
-    this.lastNotification = now;
-
     try {
       const channel = (await this.client.channels.fetch(this.channelId)) as TextChannel | null;
       if (!channel) {
@@ -50,6 +48,7 @@ export class Notifier {
       await channel.send(
         `<@${this.userId}> Match found! Accept it now!`,
       );
+      this.lastNotification = now;
       console.log('Notification sent');
     } catch (err) {
       console.error('Failed to send notification:', err);
