@@ -10,8 +10,8 @@ Uses `tsx` to run TypeScript directly — no compile step.
 
 ## Config
 
-- `config.json` — non-secret settings (displayIndex, region, threshold, userId)
-- `.env` — secrets only (DISCORD_TOKEN, DISCORD_CHANNEL_ID)
+- `config.json` — non-secret settings (displayIndex, region, threshold)
+- `.env` — secrets only (DISCORD_TOKEN, DISCORD_CHANNEL_ID, DISCORD_USER_ID)
 
 Both are loaded at startup. `.env` is gitignored.
 

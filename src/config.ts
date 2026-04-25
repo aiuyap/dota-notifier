@@ -40,9 +40,11 @@ export function loadConfig(): Config {
 
   const discordToken = process.env.DISCORD_TOKEN;
   const discordChannelId = process.env.DISCORD_CHANNEL_ID;
+  const discordUserId = process.env.DISCORD_USER_ID;
 
   if (!discordToken) fail('DISCORD_TOKEN not set in .env');
   if (!discordChannelId) fail('DISCORD_CHANNEL_ID not set in .env');
+  if (!discordUserId) fail('DISCORD_USER_ID not set in .env');
 
   if (typeof raw.displayIndex !== 'number' || raw.displayIndex < 0) {
     fail('config.json: displayIndex must be a non-negative number');
@@ -73,17 +75,13 @@ export function loadConfig(): Config {
     fail('config.json: cooldownMs must be a non-negative number');
   }
 
-  if (typeof raw.discordUserId !== 'string' || !raw.discordUserId) {
-    fail('config.json: discordUserId is required');
-  }
-
   return {
     displayIndex: raw.displayIndex,
     region: { x: region.x, y: region.y, width: region.width, height: region.height },
     threshold: raw.threshold,
     pollIntervalMs: raw.pollIntervalMs,
     cooldownMs: raw.cooldownMs,
-    discordUserId: raw.discordUserId,
+    discordUserId,
     discordToken,
     discordChannelId,
   };

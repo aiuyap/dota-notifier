@@ -1,8 +1,7 @@
 {
-  "displayIndex": 0,
-  "region": { "x": 0, "y": 0, "width": 280, "height": 80 },
+  "displayIndex": 1,
+  "region": { "x": 768, "y": 478, "width": 1045, "height": 360 },
   "threshold": 0.85,
   "pollIntervalMs": 3000,
-  "cooldownMs": 60000,
-  "discordUserId": "YOUR_DISCORD_USER_ID"
+  "cooldownMs": 60000
 }
