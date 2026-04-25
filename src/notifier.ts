@@ -1,4 +1,5 @@
 import { Client, GatewayIntentBits, TextChannel } from "discord.js";
+import { log } from './logger.js';
 
 export class Notifier {
   private client: Client;
@@ -24,12 +25,11 @@ export class Notifier {
 
     this.client.once("clientReady", () => {
       this.ready = true;
-      console.log(`Logged in as ${this.client.user?.tag}`);
+      log.success(`Logged in as ${this.client.user?.tag}`);
     });
 
     this.client.login(token).catch((err) => {
-      console.error("Failed to login to Discord:", err);
-      process.exit(1);
+      log.fatal(`Failed to login to Discord: ${err}`);
     });
   }
 
@@ -44,7 +44,7 @@ export class Notifier {
         this.channelId,
       )) as TextChannel | null;
       if (!channel) {
-        console.error("Channel not found");
+        log.error("Channel not found");
         return;
       }
       const lines = [
@@ -57,9 +57,9 @@ export class Notifier {
       const msg = `<@${this.userId}> ${lines[Math.floor(Math.random() * lines.length)]}`;
       await channel.send(msg);
       this.lastNotification = now;
-      console.log("Notification sent");
+      log.success("Notification sent");
     } catch (err) {
-      console.error("Failed to send notification:", err);
+      log.error(`Failed to send notification: ${err}`);
     }
   }
 
