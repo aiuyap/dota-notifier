@@ -47,13 +47,18 @@ export const log = {
   },
 
   banner(): void {
-    const pad = ' '.repeat(22);
-    console.log();
-    console.log(chalk.cyan('  ╔' + '═'.repeat(36) + '╗'));
-    console.log(chalk.cyan('  ║') + pad + chalk.cyan('║'));
-    console.log(chalk.cyan('  ║  ') + chalk.bold.white('Dota 2 Match Notifier  v1.0') + chalk.cyan('  ║'));
-    console.log(chalk.cyan('  ║') + pad + chalk.cyan('║'));
-    console.log(chalk.cyan('  ╚' + '═'.repeat(36) + '╝'));
-    console.log();
+    const W = 36;
+    const title = 'Dota 2 Match Notifier  v1.0';
+    const left = Math.floor((W - title.length) / 2);
+    const right = W - title.length - left;
+
+    const t = chalk.cyan;
+    log.blank();
+    console.log(`  ${t('╔')}${'═'.repeat(W)}${t('╗')}`);
+    console.log(`  ${t('║')}${' '.repeat(W)}${t('║')}`);
+    console.log(`  ${t('║')}${' '.repeat(left)}${chalk.bold.white(title)}${' '.repeat(right)}${t('║')}`);
+    console.log(`  ${t('║')}${' '.repeat(W)}${t('║')}`);
+    console.log(`  ${t('╚')}${'═'.repeat(W)}${t('╝')}`);
+    log.blank();
   },
 };
