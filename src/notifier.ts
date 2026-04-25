@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, TextChannel } from 'discord.js';
+import { Client, GatewayIntentBits, TextChannel } from "discord.js";
 
 export class Notifier {
   private client: Client;
@@ -22,13 +22,13 @@ export class Notifier {
       intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
     });
 
-    this.client.once('clientReady', () => {
+    this.client.once("clientReady", () => {
       this.ready = true;
       console.log(`Logged in as ${this.client.user?.tag}`);
     });
 
     this.client.login(token).catch((err) => {
-      console.error('Failed to login to Discord:', err);
+      console.error("Failed to login to Discord:", err);
       process.exit(1);
     });
   }
@@ -40,18 +40,26 @@ export class Notifier {
     if (now - this.lastNotification < this.cooldownMs) return;
 
     try {
-      const channel = (await this.client.channels.fetch(this.channelId)) as TextChannel | null;
+      const channel = (await this.client.channels.fetch(
+        this.channelId,
+      )) as TextChannel | null;
       if (!channel) {
-        console.error('Channel not found');
+        console.error("Channel not found");
         return;
       }
-      await channel.send(
-        `<@${this.userId}> Match found! Accept it now!`,
-      );
+      const lines = [
+        "Match found! Your team is already feeding mid. Go accept!",
+        "Game's ready. Try not to pick Pudge this time.",
+        "A match! Quick, before someone dodges and you wait another 10 minutes.",
+        "Stop touching grass. Match is ready.",
+        "Your teammates are statistically average at best. Accept before they replace you.",
+      ];
+      const msg = `<@${this.userId}> ${lines[Math.floor(Math.random() * lines.length)]}`;
+      await channel.send(msg);
       this.lastNotification = now;
-      console.log('Notification sent');
+      console.log("Notification sent");
     } catch (err) {
-      console.error('Failed to send notification:', err);
+      console.error("Failed to send notification:", err);
     }
   }
 
