@@ -1,9 +1,6 @@
-import dotenv from 'dotenv';
 import { readFileSync, existsSync } from 'fs';
 import { resolve } from 'path';
 import { log } from './logger.js';
-
-dotenv.config();
 
 export interface Region {
   x: number;
